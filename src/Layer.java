@@ -1,14 +1,15 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Layer {
-    private double[] value;
-    private double[] propagatedError;
+    private double[] values;
+    private double[] propagatedErrors;
     private double[][] w; // w[i][j] the weight of the edge connecting node j of layer H with node i of layer H + 1
     private Layer nextLayer;
 
     public Layer(int size, Layer nextLayer) {
-        this.value = new double[size];
-        this.propagatedError = new double[size];
+        this.values = new double[size];
+        this.propagatedErrors = new double[size];
         this.nextLayer = nextLayer;
 
         if (nextLayer != null) { // the current layer is not the output layer
@@ -21,30 +22,42 @@ public class Layer {
     }
 
     public int getSize() {
-        return value.length;
+        return values.length;
     }
 
-    public double[] getValue() {
-        return value;
+    public double[] getValues() {
+        return values;
     }
 
-    public void setValue(double[] value) {
-        this.value = value;
+    public void setValues(double[] values) {
+        this.values = values;
     }
 
-    public double[] getPropagatedError() {
-        return propagatedError;
+    public void setValues(ArrayList<Double> values){
+        for(int i = 0; i < values.size(); i++) {
+            this.values[i] = values.get(i);
+        }
     }
 
-    public void setPropagatedError(double[] propagatedError) {
-        this.propagatedError = propagatedError;
+    public double[] getPropagatedErrors() {
+        return propagatedErrors;
     }
 
-    public double[][] getW() {
+    public void setPropagatedErrors(double[] propagatedErrors) {
+        this.propagatedErrors = propagatedErrors;
+    }
+
+    public void setPropagatedErrors(ArrayList<Double> propagatedErrors) {
+        for(int i = 0; i < propagatedErrors.size(); i++){
+            this.propagatedErrors[i] = propagatedErrors.get(i);
+        }
+    }
+
+    public double[][] getWeightsMatrix() {
         return w;
     }
 
-    public void setW(double[][] w) {
+    public void setWeightsMatrix(double[][] w) {
         this.w = w;
     }
 
