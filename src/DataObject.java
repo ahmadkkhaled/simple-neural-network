@@ -14,6 +14,31 @@ public class DataObject {
         this.y = y;
     }
 
+    public void normalize(){
+
+        double[] mean = new double[m];
+        for(int i = 0; i < dataHeight; i++){
+            for(int j = 0; j < m; j++){
+                mean[j] += x[i].get(j) / dataHeight;
+            }
+        }
+
+        double[] stdv = new double[m];
+        for(int i = 0; i < dataHeight; i++){
+            for(int j = 0; j < m; j++){
+                double error = (mean[j] - x[i].get(j));
+                stdv[j] += (error * error) / dataHeight;
+            }
+        }
+
+        for(int i = 0; i < m; i++)
+            stdv[i] = Math.sqrt(stdv[i]);
+
+        for(int i = 0; i < dataHeight; i++)
+            for(int j = 0; j < m; j++)
+                x[i].set(j, (x[i].get(j) - mean[j]) / stdv[j]);
+    }
+
     public int getM() {
         return m;
     }
