@@ -14,29 +14,31 @@ public class DataObject {
         this.y = y;
     }
 
-    public void normalize(){
+    public void normalize(ArrayList<Double>[] vectorArray){
+        int width = vectorArray[0].size();
+        int height = vectorArray.length;
 
-        double[] mean = new double[m];
-        for(int i = 0; i < dataHeight; i++){
-            for(int j = 0; j < m; j++){
-                mean[j] += x[i].get(j) / dataHeight;
+        double[] mean = new double[width];
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                mean[j] += vectorArray[i].get(j) / height;
             }
         }
 
-        double[] stdv = new double[m];
-        for(int i = 0; i < dataHeight; i++){
-            for(int j = 0; j < m; j++){
-                double error = (mean[j] - x[i].get(j));
-                stdv[j] += (error * error) / dataHeight;
+        double[] stdv = new double[width];
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                double error = (mean[j] - vectorArray[i].get(j));
+                stdv[j] += (error * error) / height;
             }
         }
 
-        for(int i = 0; i < m; i++)
+        for(int i = 0; i < width; i++)
             stdv[i] = Math.sqrt(stdv[i]);
 
-        for(int i = 0; i < dataHeight; i++)
-            for(int j = 0; j < m; j++)
-                x[i].set(j, (x[i].get(j) - mean[j]) / stdv[j]);
+        for(int i = 0; i < height; i++)
+            for(int j = 0; j < width; j++)
+                vectorArray[i].set(j, (vectorArray[i].get(j) - mean[j]) / stdv[j]);
     }
 
     public int getM() {
