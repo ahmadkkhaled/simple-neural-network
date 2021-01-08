@@ -9,7 +9,7 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
     private ArrayList<Double>[] x, y;
     private Layer[] layers;
 
-    public NeuralNetwork(double LEARNING_RATE, int EPOHCS, int m, int l, int n, ArrayList<Double>[] x, ArrayList<Double>[] y) {
+    public NeuralNetwork(double LEARNING_RATE, int EPOHCS, int m, int l, int n) {
         this.LEARNING_RATE = LEARNING_RATE;
         this.EPOHCS = EPOHCS;
         this.m = m;
@@ -17,28 +17,75 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
         this.n = n;
         this.x = x;
         this.y = y;
-
-        // TODO normalize
-        // TODO add constant feature? (make sure normalization is done first to avoid division by 0)
-
-        initializeLayers();
-        train();
-
+        // TODO add constant feature (make sure normalization is done first to avoid division by 0)
     }
 
     /**
-     *
      * @param x feature vector
-     * @return predicted output
+     * @return prediction vector
      */
-    public double[] predict (ArrayList<Double> x){
+    public double[] predict(ArrayList<Double> x) {
         layers[0].setValues(x);
-        for(int i = 0; i <= 1; i++)
+        for (int i = 0; i <= 1; i++)
             feedForward(layers[i]);
         return layers[2].getValues();
     }
 
-    private void train() {
+    /**
+     * @param x array of feature vectors
+     * @param y array of output vectors corresponding to feature vectors in x
+     * @return a list of MSE between the predicted output for a feature vector with respect to an output vector
+     * MSE[i] the sum of component wise difference between the i-th prediction vector and the i-th output vector
+     */
+    public double[] accuracy(ArrayList<Double>[] x, ArrayList<Double>[] y) {
+        assert (x.length == y.length);
+        int height = x.length;
+
+        double[] retMse = new double[height];
+        for (int i = 0; i < height; i++) {
+            double[] prediction = predict(x[i]);
+
+            assert (prediction.length == y[i].size());
+
+            double mse = 0.0;
+            for (int j = 0; j < prediction.length; j++) {
+                double error = prediction[j] - y[i].get(j);
+                mse += error * error / prediction.length;
+            }
+            retMse[i] = mse;
+        }
+
+        return retMse;
+    }
+
+    public double getLEARNING_RATE() {
+        return LEARNING_RATE;
+    }
+
+    public int getEPOHCS() {
+        return EPOHCS;
+    }
+
+    public int getM() {
+        return m;
+    }
+
+    public int getL() {
+        return l;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public Layer[] getLayers() {
+        return layers;
+    }
+
+    public void setLayers(Layer[] layers) {this.layers = layers;}
+
+    public void train(ArrayList<Double>[] x, ArrayList<Double>[] y) {
+        initializeLayers();
         for (int epoch = 0; epoch < EPOHCS; epoch++) {
             for (int row = 0; row < x.length; row++) {
                 ArrayList<Double> featureVector = x[row];
@@ -64,10 +111,6 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
             featureVector.set(0, value);
         }
         m += 1;
-    }
-
-    private void normalize() {
-        throw new NotImplementedException();
     }
 
     private void initializeLayers() {
@@ -109,25 +152,26 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
             }
         } else {
             double[] nextLayerPropagatedErrors = nextLayer.getPropagatedErrors();
-            for(int i = 0; i < layer.getSize(); i++){
+            for (int i = 0; i < layer.getSize(); i++) {
+
                 double sum = 0.0;
+                for (int j = 0; j < nextLayer.getSize(); j++) {
+                    sum += nextLayerPropagatedErrors[j] * w[j][i];
+                }
+                double segma = sum * values[i] * (1.0 - values[i]);
 
-                for(int j = 0; j < nextLayer.getSize(); j++)
-                    sum += nextLayerPropagatedErrors[j] * w[j][i] * values[i] * (1.0 - values[i]);
-
-
-                propagatedErrors[i] = sum;
+                propagatedErrors[i] = segma;
             }
 
         }
     }
 
-    private void updateWeights(Layer layer){
+    private void updateWeights(Layer layer) {
         double[][] w = layer.getWeightsMatrix();
         double values[] = layer.getValues();
         double[] nextLayerPropagatedErrors = layer.getNextLayer().getPropagatedErrors();
-        for(int i = 0; i < w.length; i++){ // to i at L + 1
-            for(int j = 0; j < w[0].length; j++){ // from j at L
+        for (int i = 0; i < w.length; i++) { // to i at L + 1
+            for (int j = 0; j < w[0].length; j++) { // from j at L
                 w[i][j] = w[i][j] - LEARNING_RATE * nextLayerPropagatedErrors[i] * values[j];
             }
         }
