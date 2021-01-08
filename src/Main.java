@@ -62,7 +62,7 @@ public class Main {
         double netMSE = 0.0;
         for (int i = 0; i < mse.length; i++)
             netMSE += mse[i];
-        System.out.println("MSE = " + netMSE);
+        System.out.println("MSE = " + netMSE / dataObject.getDataHeight());
     }
 
     private static void load(){
