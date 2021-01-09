@@ -60,8 +60,8 @@ public class Main {
 
         double[] mse = neuralNetwork.accuracy(dataObject.getX(), dataObject.getY());
         double netMSE = 0.0;
-        for (int i = 0; i < mse.length; i++)
-            netMSE += mse[i];
+        for (double v : mse)
+            netMSE += v;
         System.out.println("MSE = " + netMSE / dataObject.getDataHeight());
     }
 
