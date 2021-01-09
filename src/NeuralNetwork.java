@@ -1,12 +1,9 @@
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.ArrayList;
 
 public class NeuralNetwork { // this model assumes that the node of each layer L is connected to all nodes of next layer L + 1
     private final double LEARNING_RATE;
     private final int EPOHCS;
     private int m, l, n;
-    private ArrayList<Double>[] x, y;
     private Layer[] layers;
 
     public NeuralNetwork(double LEARNING_RATE, int EPOHCS, int m, int l, int n) {
@@ -15,9 +12,6 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
         this.m = m;
         this.l = l;
         this.n = n;
-        this.x = x;
-        this.y = y;
-        // TODO add constant feature (make sure normalization is done first to avoid division by 0)
     }
 
     /**
@@ -105,8 +99,7 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
         }
     }
 
-    private void addConstantFeature(double value) {
-        int height = x.length;
+    private void addConstantFeature(double value, ArrayList<Double>[] x) {
         for (ArrayList<Double> featureVector : x) {
             featureVector.set(0, value);
         }
@@ -168,7 +161,7 @@ public class NeuralNetwork { // this model assumes that the node of each layer L
 
     private void updateWeights(Layer layer) {
         double[][] w = layer.getWeightsMatrix();
-        double values[] = layer.getValues();
+        double[] values = layer.getValues();
         double[] nextLayerPropagatedErrors = layer.getNextLayer().getPropagatedErrors();
         for (int i = 0; i < w.length; i++) { // to i at L + 1
             for (int j = 0; j < w[0].length; j++) { // from j at L
