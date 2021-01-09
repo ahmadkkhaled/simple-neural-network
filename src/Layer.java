@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Layer {
+    private static Random rand = new Random();
     private double[] values;
     private double[] propagatedErrors;
     private double[][] w; // w[i][j] the weight of the edge connecting node j of layer H with node i of layer H + 1
@@ -16,7 +18,8 @@ public class Layer {
             int nextLayerSize = nextLayer.getSize();
             this.w = new double[nextLayerSize][this.getSize()];
             for (double[] row : w) {
-                Arrays.fill(row, 1.0);
+                for(int j = 0; j < row.length; j++)
+                    row[j] = rand.nextDouble();
             }
         }
     }
